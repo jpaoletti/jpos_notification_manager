@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<logger name="notifications" class="org.jpos.q2.qbean.LoggerAdaptor">
+  	<log-listener class="org.jpos.util.SimpleLogListener" />
+
+	<log-listener class="org.jpos.util.DailyLogListener">
+	    <property name="prefix" value="log/notifications" />
+	    <property name="date-format" value=".yyyy-MM-dd"/>
+	    <property name="maxsize" value="-1"/>
+		<property name="compression-format" value="gzip"/>
+        <property name="compressed-suffix" value=".gz"/>
+	</log-listener>
+	
+	<log-listener class="org.jpos.util.OperatorLogListener">
+		<property name="jpos.operator.from" 			value="no-reply@jpos.com"  />
+		<property name="jpos.operator.to"             	value="some@one.com" />
+		<property name="jpos.operator.subject.prefix" 	value="[jPOS-EE] "   />
+		<property name="jpos.operator.tags"           	value="trace exception error warn" />
+		<property name="jpos.operator.delay"          	value="20000"            />
+		<property name="jpos.mail.smtp.host"        	value="smtp.one.com"    />
+	   	<property name="jpos.mail.smtp.auth"        	value="true"    />
+	   	<property name="jpos.mail.smtp.user"			value="no-reply@jpos.com"  />
+	   	<property name="jpos.mail.smtp.password"    	value="p4ssw0rd"    />
+		<property name="jpos.mail.smtp.debug"      		value="false" />
+		<property name="jpos.mail.smtp.attachmentts"	value="false" />
+  	</log-listener>
+</logger>

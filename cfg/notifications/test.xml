@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<notification class="org.jpos.ee.notification.core.SQLNotification">
+	<localname>Date Time Test</localname>
+	<delay>20000</delay>
+	<script>
+		SELECT date(current_timestamp) as Date , time(current_timestamp) as Time
+	</script>
+	<properties>
+		<property name="column-separator" value="  $  " />
+	</properties>
+</notification>

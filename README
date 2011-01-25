@@ -1,0 +1,73 @@
+*******************************************************************************
+
+jPOS Project [http://jpos.org]
+Copyright (C) 2000-2010 Alejandro P. Revilla
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+*******************************************************************************
+ 
+This module is intended to do general notifications based on jPOS Loggin system.
+There is a bean definition that must be located in some deploy folder with the
+following definition.
+
+<?xml version="1.0"?>
+<notificator class="org.jpos.ee.notification.core.NotificationQBean" logger="Q2">
+    <property name="logger"         value="notifications" />
+    <property name="realm"             value="some-realm" />
+    <property name="notification"     value="cfg/notifications/test.xml" />
+    <!-- <property name="notification"     value="...." /> -->
+</notificator>
+
+[logger]         is the name of the logger where the notifications will be posted. 
+[realm]         is the realm used by the logger.
+[notification]     are one (or more) xml files that defines notifications.
+
+
+Each notification file is an xml that must specify a sublcass of Notification 
+abstract class. The general parameters are:
+[localname]     Descriptive name of the notification
+[delay]         Interval (in milliseconds) for notification excecution.
+[script]     A notification subclass-dependant script to obtain notification data
+[properties] Extra properties for the specific subclass
+
+The test.xml file is an example of SQLNotification and looks like
+
+<?xml version="1.0"?>
+<notification class="org.jpos.ee.notification.core.SQLNotification">
+    <localname>Date Time Test</localname>
+    <delay>20000</delay>
+    <script>
+        SELECT date(current_timestamp) as Date , time(current_timestamp) as Time
+    </script>
+    <properties>
+        <property name="column-separator" value="  $  " />
+    </properties>
+</notification>
+
+The output of the test.xml notification is
+
+<log realm="" at="Fri Mar 19 15:22:40 ART 2010.385" lifespan="50ms">
+    <trace>
+        2010-03-19  $  15:22:40  $  
+    </trace>
+</log>
+
+The joke of this module is to integrate it with the log listener
+org.jpos.util.OperatorLogListener class (included in mail optional 
+module). So if someone need an email notification of the status of
+some data base data, is as simple as configure a logger with an
+OperatorLogListener pointing and email address, configure the
+Notification Manager to point this logger and build the notification
+file.

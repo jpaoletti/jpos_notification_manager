@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<notificator class="org.jpos.ee.notification.core.NotificationQBean" logger="Q2">
+	<property name="logger" 		value="notifications" />
+	<property name="realm" 			value="" />
+	<property name="notification" 	value="cfg/notifications/test.xml" />
+</notificator>
