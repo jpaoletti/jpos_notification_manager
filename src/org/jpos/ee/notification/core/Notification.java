@@ -47,92 +47,97 @@ import org.jpos.util.Logger;
  *  
  * */
 public abstract class Notification implements Runnable {
-	/**Notification name*/
-	private String localname;
-	/**Script to be executed*/
-	private String script;
-	/**Time interval in milliseconds */
-	private Long delay;
-	/**Extra properties for specific notifications*/
-	private Properties properties;
-	/**The service bean */
-	private NotificationQBean service;
-	
-	public Notification() {
-		super();
-	}
 
-	public abstract LogEvent doNotify(LogEvent evt);
-	
-	protected String getConfig(String name , String def){
-		return getProperties().getProperty(name, def);
-	}
-	
-	protected Log getLog(){
-		return getService().getNotificationLogger();
-	}
+    /**Notification name*/
+    private String localname;
+    /**Script to be executed*/
+    private String script;
+    /**Time interval in milliseconds */
+    private Long delay;
+    /**Extra properties for specific notifications*/
+    private Properties properties;
+    /**The service bean */
+    private NotificationQBean service;
 
-	public void run() {
-		boolean alive = true;
-		while(alive){
-			try {
-				LogEvent evt = getLog().createTrace();
-				//TODO Add a header to the event
-				register(doNotify(evt));
-				Thread.sleep(getDelay());
-			} catch (InterruptedException e) {
-				alive = false;
-			} catch (Exception e) {
-				getLog().error(e);
-			}
-		}
-	}
-	
-	protected void register(LogEvent evt){
-		Logger.log(evt);
-	}
-	
-	public String toString() {
-		return "Notification [localname=" + localname + "]";
-	}
+    public Notification() {
+        super();
+    }
 
-	public void setScript(String script) {
-		this.script = script;
-	}
+    public abstract LogEvent doNotify(LogEvent evt);
 
-	public String getScript() {
-		return script;
-	}
+    protected String getConfig(String name, String def) {
+        return getProperties().getProperty(name, def);
+    }
 
-	public void setService(NotificationQBean service) {
-		this.service = service;
-	}
+    protected Log getLog() {
+        return getService().getNotificationLogger();
+    }
 
-	public NotificationQBean getService() {
-		return service;
-	}
+    @Override
+    public void run() {
+        boolean alive = true;
+        while (alive) {
+            try {
+                LogEvent evt = getLog().createTrace();
+                final LogEvent n = doNotify(evt);
+                if (n != null) {
+                    register(n);
+                }
+                Thread.sleep(getDelay());
+            } catch (InterruptedException e) {
+                alive = false;
+            } catch (Exception e) {
+                getLog().error(e);
+            }
+        }
+    }
 
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
+    protected void register(LogEvent evt) {
+        Logger.log(evt);
+    }
 
-	public Properties getProperties() {
-		return properties;
-	}
+    @Override
+    public String toString() {
+        return "Notification [localname=" + localname + "]";
+    }
 
-	public void setLocalname(String localname) {
-		this.localname = localname;
-	}
+    public void setScript(String script) {
+        this.script = script;
+    }
 
-	public String getLocalname() {
-		return localname;
-	}
+    public String getScript() {
+        return script;
+    }
 
-	public void setDelay(Long delay) {
-		this.delay = delay;
-	}
+    public void setService(NotificationQBean service) {
+        this.service = service;
+    }
 
-	public Long getDelay() {
-		return delay;
-	}
+    public NotificationQBean getService() {
+        return service;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setLocalname(String localname) {
+        this.localname = localname;
+    }
+
+    public String getLocalname() {
+        return localname;
+    }
+
+    public void setDelay(Long delay) {
+        this.delay = delay;
+    }
+
+    public Long getDelay() {
+        return delay;
+    }
 }

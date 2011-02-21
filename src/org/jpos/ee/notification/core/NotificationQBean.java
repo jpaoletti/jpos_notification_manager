@@ -45,77 +45,81 @@ import org.jpos.util.NameRegistrar;
  * 
  * */
 public class NotificationQBean extends QBeanSupport implements Constants {
-	private Log notificationLogger;
-	private List<Notification> notifications;
-	private List<Thread> threads ;
 
-	protected void initService() throws Exception {
-		super.initService();
-		getLog().info("Notification Manager Activated");
-		NameRegistrar.register (getCustomName(), this);
-		setNotificationLogger(Log.getLog(cfg.get("logger"), cfg.get("realm")));
-		loadNotifications();
-	}
+    private Log notificationLogger;
+    private List<Notification> notifications;
+    private List<Thread> threads;
 
-	private void loadNotifications() {
-		NotificationParser parser = new NotificationParser();
-		notifications = new ArrayList<Notification>();
-		threads = new ArrayList<Thread>();
-        String[] ss = cfg.getAll ("notification");
-        for (Integer i=0; i<ss.length; i++) {
+    @Override
+    protected void initService() throws Exception {
+        super.initService();
+        getLog().info("Notification Manager Activated");
+        NameRegistrar.register(getCustomName(), this);
+        setNotificationLogger(Log.getLog(cfg.get("logger"), cfg.get("realm")));
+        loadNotifications();
+    }
+
+    private void loadNotifications() {
+        NotificationParser parser = new NotificationParser();
+        notifications = new ArrayList<Notification>();
+        threads = new ArrayList<Thread>();
+        String[] ss = cfg.getAll("notification");
+        for (Integer i = 0; i < ss.length; i++) {
             Notification n;
-			try {
-				n = parser.parseNotificationFile(ss[i]);
-	            n.setService(this);
-	            Thread thread = new Thread(n, n.getLocalname());
-				notifications.add(n);
-	            threads.add(thread);
-	            getLog().info ("Initializing "+n.toString());
-			} catch (FileNotFoundException e) {
-				getLog().error(e);
-			}
-        }	
-	}
-	
-	protected void startService() throws Exception {
-		for (Thread notification : getThreads()) {
-			getLog().info ("Starting "+notification);
-			notification.start();
-		}
-	}
+            try {
+                n = parser.parseNotificationFile(ss[i]);
+                n.setService(this);
+                Thread thread = new Thread(n, n.getLocalname());
+                notifications.add(n);
+                threads.add(thread);
+                getLog().info("Initializing " + n.toString());
+            } catch (FileNotFoundException e) {
+                getLog().error(e);
+            }
+        }
+    }
 
-	protected void stopService() throws Exception {
-		for (Thread notification : getThreads()) {
-			getLog().info ("Stoping "+notification);
-			notification.interrupt();
-		}
-	}
+    @Override
+    protected void startService() throws Exception {
+        for (Thread notification : getThreads()) {
+            getLog().info("Starting " + notification);
+            notification.start();
+        }
+    }
 
-	private static String getCustomName() {
-		return "notification-manager";
-	}
+    @Override
+    protected void stopService() throws Exception {
+        for (Thread notification : getThreads()) {
+            getLog().info("Stoping " + notification);
+            notification.interrupt();
+        }
+    }
 
-	public void setNotifications(List<Notification> notifications) {
-		this.notifications = notifications;
-	}
+    private static String getCustomName() {
+        return "notification-manager";
+    }
 
-	public List<Notification> getNotifications() {
-		return notifications;
-	}
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
 
-	public void setNotificationLogger(Log notificationLogger) {
-		this.notificationLogger = notificationLogger;
-	}
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
 
-	public Log getNotificationLogger() {
-		return notificationLogger;
-	}
+    public void setNotificationLogger(Log notificationLogger) {
+        this.notificationLogger = notificationLogger;
+    }
 
-	public void setThreads(List<Thread> threads) {
-		this.threads = threads;
-	}
+    public Log getNotificationLogger() {
+        return notificationLogger;
+    }
 
-	public List<Thread> getThreads() {
-		return threads;
-	}
+    public void setThreads(List<Thread> threads) {
+        this.threads = threads;
+    }
+
+    public List<Thread> getThreads() {
+        return threads;
+    }
 }

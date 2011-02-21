@@ -32,33 +32,34 @@ import org.jpos.util.LogEvent;
  * @see http://github.com/jpaoletti/jPOS-Notification-Manager
  * 
  * */
-public class SQLNotification extends Notification{
+public class SQLNotification extends Notification {
 
-	public LogEvent doNotify(LogEvent evt) {
-		DB db = new DB();
-		db.open();
-		try {
-			SQLQuery c = db.session().createSQLQuery(getScript().trim());
-			List<?> l = c.list();
-			for (Iterator<?> iterator = l.iterator(); iterator.hasNext();) {
-				Object item = iterator.next();
-				StringBuilder sb = new StringBuilder();
-				if (item instanceof Object[]) {
-					Object[] objects = (Object[]) item;
-					for (int i = 0; i < objects.length; i++) {
-						Object object = objects[i];
-						sb.append(object);
-						sb.append(getConfig("column-separator", "	|	"));
-					}
-				}else{
-					//TODO Iterate over properties with introspection
-					sb.append(item);
-				}
-				evt.addMessage(sb.toString());
-			}
-		} finally{
-			db.close();
-		}
-		return evt;
-	}
+    @Override
+    public LogEvent doNotify(LogEvent evt) {
+        DB db = new DB();
+        db.open();
+        try {
+            SQLQuery c = db.session().createSQLQuery(getScript().trim());
+            List<?> l = c.list();
+            for (Iterator<?> iterator = l.iterator(); iterator.hasNext();) {
+                Object item = iterator.next();
+                StringBuilder sb = new StringBuilder();
+                if (item instanceof Object[]) {
+                    Object[] objects = (Object[]) item;
+                    for (int i = 0; i < objects.length; i++) {
+                        Object object = objects[i];
+                        sb.append(object);
+                        sb.append(getConfig("column-separator", "	|	"));
+                    }
+                } else {
+                    //TODO Iterate over properties with introspection
+                    sb.append(item);
+                }
+                evt.addMessage(sb.toString());
+            }
+        } finally {
+            db.close();
+        }
+        return evt;
+    }
 }
